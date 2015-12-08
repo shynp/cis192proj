@@ -17,4 +17,5 @@ t = Twitter(auth=o_auth)
 twitter_stream = TwitterStream(auth=o_auth, domain='userstream.twitter.com')
 
 for msg in twitter_stream.user():
-	print(msg)
+	if running:
+		print(msg)
