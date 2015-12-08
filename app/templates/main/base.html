@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    {% block head %}
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+        {% assets "css_main" %}
+    <link rel="stylesheet" href="{{ ASSET_URL }}">{% endassets %}
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="https://cdn.rawgit.com/weblinc/jquery.smoothState.js/master/jquery.smoothState.js"></script>
+    <script src="https://cdn.rawgit.com/ftlabs/fastclick/master/lib/fastclick.js"></script>
+    <script src="../../static/js/jquery.percentageloader-0.1.js"></script>
+    <title>{% block title %}{% endblock %} - iCAN</title>
+    {% endblock %}
+</head>
+
+<body>
+    <div id="main" class="scene">
+        {# we are now inside the smoothState.js container. #}
+
+        {% if self.header() %}
+        <header>
+            {% block header %}{% endblock %}
+        </header>
+        {% endif %}
+        <main class="fade-in-up element">
+            {% with messages = get_flashed_messages() %}
+                {% for message in messages %}
+                    <div class="flash">{{ message }}</div>
+                {% endfor %}
+            {% endwith %}
+
+            {% block main %}{% endblock %}
+        </main>
+        {% block scripts %}{% endblock %}
+
+    </div>
+    <!-- scripts -->
+    <script>
+        (function ($) {
+            'use strict';
+            FastClick.attach(document.body);
+
+            var content = $('#main').smoothState({
+                development: true,
+                prefetch: true,
+                pageCacheSize: 4,
+                onEnd: {
+                    duration: 0,
+                    render: function(url, $container, $content) {
+                        $container.html($content);
+                        // Remove .flash-error divs
+                        $('.flash').css('display', 'none');
+                    }
+                }
+            }).data('smoothState');
+
+        })(jQuery);
+    </script>
+</body>
+
+</html>
