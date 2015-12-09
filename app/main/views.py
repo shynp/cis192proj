@@ -1,4 +1,5 @@
 from . import main
+import code
 from flask import render_template, flash, current_app, redirect, url_for
 from multiprocessing import Process, Manager
 from streaming_api_example import run
@@ -54,10 +55,10 @@ def create_job():
             manager = Manager()
             d = manager.dict()
             d['keys'] = {
-                'CONSUMER_KEY': create_job_form.consumer_key.data,
-                'CONSUMER_SECRET': create_job_form.consumer_secret,
-                'ACCESS_TOKEN': create_job_form.access_token,
-                'ACCESS_TOKEN_SECRET': create_job_form.access_token_secret
+                'CONSUMER_KEY': str(create_job_form.consumer_key.data),
+                'CONSUMER_SECRET': str(create_job_form.consumer_secret.data),
+                'ACCESS_TOKEN': str(create_job_form.access_token.data),
+                'ACCESS_TOKEN_SECRET': str(create_job_form.access_token_secret.data)
             }
             d['running'] = True
             d['metrics'] = None
@@ -73,6 +74,7 @@ def create_job():
 @main.route('/get_data', methods=['GET'])
 @login_required
 def get_data():
+    # code.interact(local=locals())
     if current_user.username in process_dct:
         print('/get_data')
         print('Data: ' + str(dict_dct[current_user.username]))
@@ -88,7 +90,7 @@ def get_data():
 def stop_job():
     if current_user.username in process_dct:
         process = process_dct[current_user.username]
-        dict_dct[current_user.username] = False
+        dict_dct[current_user.username]['running'] = False
         print('Sent process stop signal, waiting for process to complete')
         process.join()
         print('Process finished: ' + str(process_dct[current_user.username].is_alive()))
