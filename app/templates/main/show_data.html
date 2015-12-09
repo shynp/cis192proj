@@ -1,0 +1,25 @@
+{% extends "/main/base.html" %}
+
+{% block title %}Show Data Page{% endblock %}
+
+{% block header %}
+<div class="wrap">
+    <a href="javascript: history.go(-1)"><i class="fa fa-angle-left"></i>&nbsp; Back</a>
+</div>
+{% endblock %}
+
+{% block main %}
+<a href="/logout">Log out</a>
+
+<div class="wrap">
+    <h2>Job Data</h2>
+    {% for key in result.keys() %}
+        <tr>
+            <th> {{ key }} </th>
+            <td> {{ result[key] }} </td> <br>
+        </tr>
+    {% endfor %}
+</div>
+
+<a href="/stop_job">Stop Job</a>
+{% endblock %}

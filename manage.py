@@ -1,5 +1,5 @@
 from app import create_app, db
-from app.models import User
+# from app.models import User
 from flask.ext.script import Manager, Shell
 from flask.ext.migrate import Migrate, MigrateCommand
 import os
@@ -30,3 +30,4 @@ def deploy():
 
 if __name__ == '__main__':
     manager.run()
+    # app.run()

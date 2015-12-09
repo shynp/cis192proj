@@ -16,11 +16,3 @@ class SignupForm(Form):
     password2 = PasswordField('Confirm password', validators=[Required()])
     remember_me = BooleanField('Keep me logged in')
     submit = SubmitField('Sign up')
-
-
-class CreateJobForm(Form):
-	consumer_key = StringField('Consumer Key', validators=[Required()])
-	consumer_secret = StringField('Consumer Secret', validators=[Required()])
-	access_token = StringField('Access Token', validators=[Required()])
-	access_token_secret = StringField('Access Token Secret', validators=[Required()])
-	submit = SubmitField('Create Job')

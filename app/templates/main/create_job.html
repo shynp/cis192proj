@@ -1,6 +1,7 @@
 {% extends "/main/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
 
-{% block title %}500 Internal Server Error{% endblock %}
+{% block title %}Create Job Page{% endblock %}
 
 {% block header %}
 <div class="wrap">
@@ -9,7 +10,10 @@
 {% endblock %}
 
 {% block main %}
-<div class="page-header">
-    <h1>500 - Internal Server Error</h1>
+<a href="/logout">Log out</a>
+
+<div class="wrap">
+    <h2>Create Job</h2>
+    {{ wtf.quick_form(create_job_form) }}
 </div>
 {% endblock %}

@@ -4,8 +4,8 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'test dev key'
-    SQLACHEMY_COMMIT_ON_TEARDOWN = True
-    SSL_DISABLE = False
+    SQLALCHEMY_COMMIT_ON_TEARDOWN = True
+    SSL_DISABLE = True
     WTF_CSRF_ENABLED = True
 
     @staticmethod
@@ -13,8 +13,8 @@ class Config:
         pass
 
 class DevConfig(Config):
-    DEBUG = False
-    SQLACHEMY_DATABASE_URI = os.environ.get('DEV_DB_URL') or \
+    DEBUG = True
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DB_URL') or \
         'sqlite:///' + os.path.join(basedir, 'dev-db.sqlite')
 
 class ProdConfig(Config):
