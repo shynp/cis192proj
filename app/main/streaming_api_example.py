@@ -18,43 +18,38 @@ def run(d):
 	user_metrics = dict()
 	tweet_metrics = dict()
 
-	print type(d)
-	while d['running']:
-		print d['running']
-		time.sleep(2)
-		print(twitter_stream.user())
 	# code.interact(local=locals())
-	# for msg in twitter_stream.user():
-	# 	print msg
+	for msg in twitter_stream.user():
+		print msg
 
-	# 	if not d['running']:
-	# 		break
+		if not d['running']:
+			break
 
-	# 	# per tweet metrics
-	# 	tweet = dict()
+		# per tweet metrics
+		tweet = dict()
 
-	# 	#  per user metrics
-	# 	user = dict()
+		#  per user metrics
+		user = dict()
 
-	# 	if 'text' in msg:
-	# 		tweet['text'] = msg['text']
-	# 	if 'user' in msg:
-	# 		tweet['user'] = msg['user']['name'] # who posted the tweet
-	# 		user['name'] = msg['user']['name']
-	# 		user['status_count'] = msg['user']['statuses_count']
-	# 		user['follower_count'] = msg['user']['followers_count']
-	# 		user['following_count'] = msg['user']['friends_count']
-	# 		user_metrics[user['name']] = user
-	# 	if 'favorite_count' in msg:
-	# 		tweet['favorite_count'] = msg['favorite_count'] # how many likes it has
-	# 		user['favorite_count'] = msg['user']['favourites_count']
-	# 	if 'retweet_count' in msg:
-	# 		tweet['retweet_count'] = msg['retweet_count'] # how many retweets it has
-	# 	if 'text' in msg:
-	# 		tweet_metrics[tweet['text']] = tweet
+		if 'text' in msg:
+			tweet['text'] = msg['text']
+		if 'user' in msg:
+			tweet['user'] = msg['user']['name'] # who posted the tweet
+			user['name'] = msg['user']['name']
+			user['status_count'] = msg['user']['statuses_count']
+			user['follower_count'] = msg['user']['followers_count']
+			user['following_count'] = msg['user']['friends_count']
+			user_metrics[user['name']] = user
+		if 'favorite_count' in msg:
+			tweet['favorite_count'] = msg['favorite_count'] # how many likes it has
+			user['favorite_count'] = msg['user']['favourites_count']
+		if 'retweet_count' in msg:
+			tweet['retweet_count'] = msg['retweet_count'] # how many retweets it has
+		if 'text' in msg:
+			tweet_metrics[tweet['text']] = tweet
 
-	# 	# TODO include metrics bucketed into groups, a la competitors, followers, etc.
+		# TODO include metrics bucketed into groups, a la competitors, followers, etc.
 
-	# 	metrics['tweet_metrics'] = tweet_metrics
-	# 	metrics['user_metrics'] = user_metrics
-	# 	d['metrics'] = metrics
+		metrics['tweet_metrics'] = tweet_metrics
+		metrics['user_metrics'] = user_metrics
+		d['metrics'] = metrics
