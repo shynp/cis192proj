@@ -12,13 +12,77 @@
 <a href="/logout">Log out</a>
 
 <div class="wrap">
-    <h2>Job Data</h2>
-    {% for key in result.keys() %}
-        <tr>
-            <th> {{ key }} </th>
-            <td> {{ result[key] }} </td> <br>
-        </tr>
-    {% endfor %}
+    <h1>Job Data:</h1><br>
+    <em>Running: <strong> {{ result['running'] }} </strong></em>
+
+    <br><br>
+    <h2>Feed Data:</h2>
+    <div class="feed_container">
+        <canvas id="feed_chart" width="450" height="275"></canvas>
+    </div> <br><br>
+
+    <h2>User Data</h2>
+    <div class="user_container">
+        {% for user in users %}
+            <div class="user user_{{user}}">
+                <div>
+                    <h3>User: {{user}}</h3>
+                    Number of Statuses by User: {{ users[user]['status_count'] }} <br>
+                    Number of Followers: {{ users[user]['follower_count'] }} <br>
+                    Number Following: {{ users[user]['following_count'] }} <br>
+                    Average Number of Favorites for User: {{ users[user]['favorite_count']  / users[user]['status_count'] }}
+                </div> <br>
+                <canvas id="user_{{user}}_chart" width="450" height="275"></canvas>
+            </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            var metricsExist = {{ metrics_exist }};
+
+            var feedPieData = [
+                {% for item,label,colors in aggr_set %}
+                    {
+                        value: {{item}},
+                        label: "{{label}}",
+                        color : "{{colors}}"
+                    },
+                {% endfor %}
+            ];
+
+            console.log("feedPie:");
+            console.log(feedPieData);
+
+            if (metricsExist) {
+                new Chart(document.getElementById("feed_chart").getContext("2d")).Pie(feedPieData);
+            }
+            // draw pie chart
+
+            var userPieData = {}
+
+            {% for user in users %}
+                userPieData["{{user}}"] = [
+                    {% for item,label,colors in user_dct[user] %}
+                        {
+                            value: {{item}},
+                            label: "{{label}}",
+                            color: "{{colors}}"
+                        },
+                    {% endfor %}
+                ]
+            {% endfor %}
+
+            for (user in userPieData) {
+                var userData = userPieData[user];
+                console.log("userData:");
+                console.log(userData);
+
+
+                new Chart(document.getElementById("user_" + user + "_chart").getContext("2d")).Pie(userData);
+            }
+        });
+    </script>
 </div>
 
 <a href="/stop_job">Stop Job</a>

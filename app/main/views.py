@@ -1,14 +1,16 @@
 from . import main
 import code
-from flask import render_template, flash, current_app, redirect, url_for
+from flask import render_template, flash, current_app, redirect, url_for, Flask, Markup
 from multiprocessing import Process, Manager
 from streaming_api_example import run
 from .forms import LoginForm, SignupForm, CreateJobForm
 from flask.ext.login import login_user, logout_user, login_required, current_user
 from ..models import User
 from .. import db
-from streaming_api_example import run
+from streaming import run
 import threading
+import metric_analysis
+
 
 process_dct = {}
 dict_dct = {}
@@ -84,7 +86,46 @@ def get_data():
         print('Data: ' + str(dict_dct[current_user.username]))
         print('Running: ' + str(dict_dct[current_user.username]['running']))
         print('Thread running: ' + str(process_dct[current_user.username].is_alive()))
-        return render_template('main/show_data.html', result=dict_dct[current_user.username])
+        d = dict_dct[current_user.username]
+
+        metrics_exist = False
+        usr_dct = {}
+        aggr_set = {}
+        usr_dct = {}
+        usrs = {}
+
+        if d['metrics'] != None:
+            metrics_exist = True
+            aggr_set = get_chart(d['metrics']['stream_sentiment']['pos_sentiment'], d['metrics']['stream_sentiment']['neu_sentiment'],
+                d['metrics']['stream_sentiment']['neg_sentiment'])
+            print("pos " + str(d['metrics']['stream_sentiment']['pos_sentiment']))
+            print("neu " + str(d['metrics']['stream_sentiment']['neu_sentiment']))
+            print("neg " + str(d['metrics']['stream_sentiment']['neg_sentiment']))
+            usrs = d['metrics']['user_metrics']
+            print(aggr_set)
+
+            for username in usrs:
+                pos = 0.0
+                neut = 0.0
+                neg = 0.0
+                n = 0
+                for tweet in d['metrics']['tweet_metrics']:
+                    if username == d['metrics']['tweet_metrics'][tweet]['user']:
+                        pos += d['metrics']['tweet_metrics'][tweet]['pos_sentiment']
+                        neut += d['metrics']['tweet_metrics'][tweet]['neu_sentiment']
+                        neg += d['metrics']['tweet_metrics'][tweet]['neg_sentiment']
+                        n += 1
+                if n > 0:
+                    usr_dct[username] = get_chart(pos / n, neut / n, neg / n)
+                else:
+                    usr_dct[username] = get_chart(0, 1, 0)
+
+        if metrics_exist:
+            flag = 'true'
+        else:
+            flag = 'false'
+        return render_template('main/show_data.html', result=dict_dct[current_user.username],
+            aggr_set=aggr_set, users=usrs, user_dct=usr_dct, metrics_exist=flag)
     else:
         flash('No job exists for this User')
         return redirect(url_for('.create_job'))
@@ -109,5 +150,14 @@ def stop_job():
 @login_required
 def log_out():
     logout_user()
-    return redirect('/')
+    return redirect(url_for('.index'))
+
+def get_chart(pos, neu, neg):
+    p = pos
+    ne = neu
+    ng = neg
+    labels = ["positive", "neutral", "negative"]
+    values = [p, ne, ng]
+    colors = ["#9fff80", "#ffff00", "#ff0000"]
+    return zip(values, labels, colors)
 
